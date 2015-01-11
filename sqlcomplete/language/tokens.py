@@ -32,3 +32,7 @@ class Either(namedtuple('Either', 'things')):
 
 # something [, ...]
 ManyTimes = namedtuple('ManyTimes', 'thing')
+
+# Silly python 3 hack - comparing to None has been removed, so we need a class
+# that we can compare to the classes here and be less than any of them
+EmptyToken = namedtuple('_EmptyToken', '')

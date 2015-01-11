@@ -2,6 +2,7 @@ from .tokens import *
 from functools import total_ordering
 from .utils import recursive_repr
 
+
 @total_ordering
 class Node(object):
 
@@ -16,12 +17,18 @@ class Node(object):
         # TODO: make this sorted, memoized
         return tuple(self._children)
 
+    def children_sorted(self):
+        if not getattr(self, '_children_sorted', None):
+            self._children_sorted = tuple(sorted(self._children))
+        return self._children_sorted
+
     @property
     def key(self):
         "Key for this node, used for hashing and establishing ordering."
         return (self.node_value, self.children)
 
     def add_child(self, node):
+        self._children_sorted = None
         self._children.append(node)
 
     def matches_syntax_type(self, thing):
@@ -53,13 +60,14 @@ class Node(object):
 # content has a edge to each of the content nodes and each of the content nodes
 # point to the last Empty.
 
-
 class EmptyNode(Node):
 
     def __init__(self, children=None):
-        Node.__init__(self, None, children)
+        Node.__init__(self, EmptyToken(), children)
 
 # TODO: merge two graphs
+
+
 def create_subgraph(syntax_element):
     """ Takes as an argument an Keyword, Variable, Optional, Either or Manytimes
         and returns the root and leaf of the subgraph. """
