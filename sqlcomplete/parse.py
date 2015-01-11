@@ -6,13 +6,13 @@ from .language.graph import Node, EmptyNode
 def children_of(active_frontier):
     Q = deque(active_frontier)
     visited = set(active_frontier)
-    while not Q.empty():
+    while Q:
         node = Q.pop()
         if isinstance(node, EmptyNode):
             for child in node.children:
                 if child not in visited:
                     visited.add(child)
-                    Q.append_left(child)
+                    Q.appendleft(child)
         else:
             yield node
 
@@ -37,10 +37,24 @@ def autocomplete_frontier(word, frontier):
                 yield suggestion
 
 parse_pattern = re.compile('''\
-\w+
+\w
 | [(),*]''', re.UNICODE | re.X)
 
 
 def parse_sql(query):
     # assumes the query has already been split into multiple pieces
     return tuple(parse_pattern.findall(query))
+
+
+def start_frontier(language):
+    return [(language, True)]
+
+
+def autocomplete(query, language_root):
+    tokens = parse_sql(query)
+    frontier = start_frontier(language_root)
+    frontier = list(next_frontier(query, frontier, {}))
+
+    print [node.node_value for node, _ in frontier]
+    from IPython import embed; embed()
+    return list(autocomplete_frontier(tokens[-1], frontier))

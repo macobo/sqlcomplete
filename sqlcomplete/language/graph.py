@@ -34,15 +34,18 @@ class Node(object):
         self._children_sorted = None
         self._children.append(node)
 
-    def matches_syntax_type(self, thing):
-        if type(self.node_value) != type(thing):
-            return False
-        compare = ['name', 'thing', 'things']
-        return all(getattr(self.node_value, t) == getattr(thing, t) for t in compare)
+    # Matching
+    def match(self, word):
+        assert not isinstance(self, EmptyNode)
+        return self.node_value.match(word)
+
+    def possible_values(self, word):
+        assert not isinstance(self, EmptyNode)
+        return self.node_value.possible_values(word)
 
     # Make the node type hashable
     def __hash__(self):
-        return hash(self.key)
+        return hash((self.node_value,))
 
     def __eq__(self, other):
         return self.key == other.key
