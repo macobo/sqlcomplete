@@ -1,4 +1,5 @@
 # Tests for the language parser
+import pytest
 from sqlcomplete.language.parser import *
 
 
@@ -21,6 +22,7 @@ def test_parse_optional():
     assert parse('SELECT [ ALL B ]') == (
         Keyword('SELECT'),
         Optional((Keyword('ALL'), Keyword('B'))))
+    assert parse('[ A ]') == (Optional((Keyword('A'),)), )
 
 
 def test_parse_either():
@@ -57,3 +59,11 @@ SELECT [ ALL | DISTINCT [ ON ( expression [, ...] ) ] ]
             Optional((
                 Optional((Keyword('AS'),)),
                 Variable('output_name')))))))
+
+
+@pytest.mark.xfail
+def test_compress_sequencial_keywords():
+    assert parse('SELECT ALL vars IS A') == (
+        Keyword('SELECT ALL'),
+        Variable('vars'),
+        Keyword('IS A'))

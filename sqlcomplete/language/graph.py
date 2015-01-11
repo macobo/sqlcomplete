@@ -1,17 +1,25 @@
 from .tokens import *
+from functools import total_ordering
+from .utils import recursive_repr
 
-
+@total_ordering
 class Node(object):
 
-    def __init__(self, node_value, children=[]):
-        assert type(node_value) in [Keyword, Variable, type(None)]
+    def __init__(self, node_value, children=None):
+        # assert type(node_value) in [Keyword, Variable, type(None)]
         self.node_value = node_value
         # TODO: allow weights for the childs
-        self._children = children
+        self._children = children if children else []
 
     @property
     def children(self):
+        # TODO: make this sorted, memoized
         return tuple(self._children)
+
+    @property
+    def key(self):
+        "Key for this node, used for hashing and establishing ordering."
+        return (self.node_value, self.children)
 
     def add_child(self, node):
         self._children.append(node)
@@ -24,20 +32,17 @@ class Node(object):
 
     # Make the node type hashable
     def __hash__(self):
-        return hash((self.node_value, self.children))
+        return hash(self.key)
 
-    # Define ordering (for sorting children for faster merges)
-    # The exact ordering is not important, it just has to be consistent
-    def __cmp__(self, other):
-        if type(self.node_value) != type(other.node_value):
-            return cmp(str(type(self.node_value)), str(type(other.node_value)))
-        if len(self.children) != len(other.children):
-            return cmp(len(self.children), len(other.children))
-        for a, b in zip(self.children, other.children):
-            compared = cmp(a, b)
-            if compared:
-                return compared
-        return 0
+    def __eq__(self, other):
+        return self.key == other.key
+
+    def __lt__(self, other):
+        return self.key < other.key
+
+    @recursive_repr()
+    def __repr__(self):
+        return "Node(node_value=%r, children=%r)" % self.key
 
 # Used for groupings
 #
@@ -51,7 +56,7 @@ class Node(object):
 
 class EmptyNode(Node):
 
-    def __init__(self, children=[]):
+    def __init__(self, children=None):
         Node.__init__(self, None, children)
 
 # TODO: merge two graphs
@@ -64,21 +69,21 @@ def create_subgraph(syntax_element):
         node = Node(syntax_element)
         return node, node
     elif isinstance(syntax_element, Optional):
-        sub_node_start, sub_node_end = create_subgraph(syntax_element.thing)
-        start = EmptyNode([sub_node_start])
-        end = EmptyNode([sub_node_end])
+        sub_node_start, sub_node_end = transform_syntax_list(syntax_element.thing)
+        end = EmptyNode([])
+        start = EmptyNode([sub_node_start, end])
+        sub_node_end.add_child(end)
         return start, end
     elif isinstance(syntax_element, Either):
         start, end = EmptyNode(), EmptyNode()
         for child in syntax_element.things:
             # nope - this should be something like parse_syntax_list!
-            sub_start, sub_end = create_subgraph(child)
-            start.add_child(sub_start)
+            sub_start, sub_end = transform_syntax_list(child, root_node=start)
             sub_end.add_child(end)
         return start, end
     else:
         # Make the subgraph end point to the start, requiring a comma in between!
-        assert isinstance(syntax_element, ManyTimes)
+        assert isinstance(syntax_element, ManyTimes), type(syntax_element)
         sub_node_start, sub_node_end = create_subgraph(syntax_element.thing)
 
         comma_node = EmptyNode()  # TODO: replace with a node matching ','
