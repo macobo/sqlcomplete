@@ -1,6 +1,7 @@
 # Parser for the language definition
 from .tokens import *
 
+
 def pop_until(tokens, end_token, start_token):
     result = []
     start_token_count = 1
@@ -14,6 +15,7 @@ def pop_until(tokens, end_token, start_token):
                 break
         result.append(token)
     return result
+
 
 def consume_single(tokens):
     token = tokens.pop(0)
@@ -32,13 +34,14 @@ def consume_single(tokens):
     else:
         raise ValueError("Could not parse %r" % token)
 
+
 def consume(tokens):
     var = consume_single(tokens)
     if tokens and tokens[0] == '|':
         tokens.pop(0)
         next_var = consume_single(tokens)
         if isinstance(next_var, Either):
-            return Either(tuple([var]+next_var.things))
+            return Either(tuple([var] + next_var.things))
         else:
             return Either(tuple([var, next_var]))
     if tokens and tokens[0] == '[,':
@@ -46,6 +49,7 @@ def consume(tokens):
         assert tokens.pop(0) == '...]'
         return ManyTimes(var)
     return var
+
 
 def parse(expression):
     if isinstance(expression, str):

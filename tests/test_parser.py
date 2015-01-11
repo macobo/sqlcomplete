@@ -51,3 +51,9 @@ SELECT [ ALL | DISTINCT [ ON ( expression [, ...] ) ] ]
             ManyTimes(Variable('expression')),
             Keyword(')')))
     ))
+    assert result[2] == ManyTimes(Either((
+        (Keyword('*'),),
+        (Variable('expression'),
+            Optional((
+                Optional((Keyword('AS'),)),
+                Variable('output_name')))))))
