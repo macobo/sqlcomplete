@@ -38,9 +38,9 @@ def consume(tokens):
         tokens.pop(0)
         next_var = consume_single(tokens)
         if isinstance(next_var, Either):
-            return Either([var]+next_var.things)
+            return Either(tuple([var]+next_var.things))
         else:
-            return Either([var, next_var])
+            return Either(tuple([var, next_var]))
     if tokens and tokens[0] == '[,':
         tokens.pop(0)
         assert tokens.pop(0) == '...]'

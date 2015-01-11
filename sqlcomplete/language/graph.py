@@ -54,17 +54,17 @@ class EmptyNode(Node):
     def __init__(self, children=[]):
         Node.__init__(self, None, children)
 
-# TODO: merge two trees
-def create_subtree(syntax_element):
+# TODO: merge two graphs
+def create_subgraph(syntax_element):
     """ Takes as an argument an Keyword, Variable, Optional, Either or Manytimes
-        and returns the root and leaf of the subtree. """
+        and returns the root and leaf of the subgraph. """
 
     if isinstance(syntax_element, Keyword) or isinstance(syntax_element, Variable):
         # TODO: parse the Variable somehow?
         node = Node(syntax_element)
         return node, node
     elif isinstance(syntax_element, Optional):
-        sub_node_start, sub_node_end = create_subtree(syntax_element.thing)
+        sub_node_start, sub_node_end = create_subgraph(syntax_element.thing)
         start = EmptyNode([sub_node_start])
         end = EmptyNode([sub_node_end])
         return start, end
@@ -72,14 +72,14 @@ def create_subtree(syntax_element):
         start, end = EmptyNode(), EmptyNode()
         for child in syntax_element.things:
             # nope - this should be something like parse_syntax_list!
-            sub_start, sub_end = create_subtree(child)
+            sub_start, sub_end = create_subgraph(child)
             start.add_child(sub_start)
             sub_end.add_child(end)
         return start, end
     else:
-        # Make the subtree end point to the start, requiring a comma in between!
+        # Make the subgraph end point to the start, requiring a comma in between!
         assert isinstance(syntax_element, ManyTimes)
-        sub_node_start, sub_node_end = create_subtree(syntax_element.thing)
+        sub_node_start, sub_node_end = create_subgraph(syntax_element.thing)
 
         comma_node = EmptyNode()  # TODO: replace with a node matching ','
         sub_node_end.add_child(comma_node)
@@ -88,16 +88,16 @@ def create_subtree(syntax_element):
 
 
 def transform_syntax_list(syntax_list, root_node=None):
-    """ Transform a list of syntax elements to a language tree.
-        Returns the root and end node of the created tree """
+    """ Transform a list of syntax elements to a language graph.
+        Returns the root and end node of the created graph """
     iterator = iter(syntax_list)
     if root_node is None:
-        root_node, end_node = create_subtree(next(iterator))
+        root_node, end_node = create_subgraph(next(iterator))
     else:
         end_node = root_node
 
     for element in iterator:
-        start, new_end = create_subtree(element)
+        start, new_end = create_subgraph(element)
         end_node.add_child(start)
         end_node = new_end
     return root_node, end_node
