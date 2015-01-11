@@ -27,8 +27,10 @@ def consume_single(tokens):
         sub_tokens = pop_until(tokens, '}', '{')
         # print '\t\t%s' % ' '.join(sub_tokens)
         return Either.split_and_parse(sub_tokens)
-    if token in '*()' or token.isupper():
+    if token in '*' or token.isupper():
         return Keyword(token)
+    elif token in '()':
+        return Literal(token)
     elif token.islower():
         return Variable(token)
     else:
@@ -52,6 +54,7 @@ def consume(tokens):
 
 
 def parse(expression):
+    # TODO: replace lists with deque!
     if isinstance(expression, str):
         tokens = expression.split()
     else:

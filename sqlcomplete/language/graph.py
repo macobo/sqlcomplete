@@ -5,6 +5,9 @@ from .utils import recursive_repr
 
 @total_ordering
 class Node(object):
+    NoMatch = 0
+    PartialMatch = 1
+    FullMatch = 2
 
     def __init__(self, node_value, children=None):
         # assert type(node_value) in [Keyword, Variable, type(None)]
@@ -63,7 +66,7 @@ class Node(object):
 class EmptyNode(Node):
 
     def __init__(self, children=None):
-        Node.__init__(self, EmptyToken(), children)
+        Node.__init__(self, tuple(), children)
 
 # TODO: merge two graphs
 
@@ -77,7 +80,7 @@ def create_subgraph(syntax_element):
         node = Node(syntax_element)
         return node, node
     elif isinstance(syntax_element, Optional):
-        sub_node_start, sub_node_end = transform_syntax_list(syntax_element.thing)
+        sub_node_start, sub_node_end = transform_syntax_list(syntax_element.things)
         end = EmptyNode([])
         start = EmptyNode([sub_node_start, end])
         sub_node_end.add_child(end)
@@ -94,7 +97,7 @@ def create_subgraph(syntax_element):
         assert isinstance(syntax_element, ManyTimes), type(syntax_element)
         sub_node_start, sub_node_end = create_subgraph(syntax_element.thing)
 
-        comma_node = EmptyNode()  # TODO: replace with a node matching ','
+        comma_node = Node(Literal(','))  # TODO: replace with a node matching ','
         sub_node_end.add_child(comma_node)
         comma_node.add_child(sub_node_start)
         return sub_node_start, sub_node_end
