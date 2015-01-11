@@ -37,7 +37,7 @@ def autocomplete_frontier(word, frontier):
                 yield suggestion
 
 parse_pattern = re.compile('''\
-\w
+\w+
 | [(),*]''', re.UNICODE | re.X)
 
 
@@ -55,6 +55,4 @@ def autocomplete(query, language_root):
     frontier = start_frontier(language_root)
     frontier = list(next_frontier(query, frontier, {}))
 
-    print [node.node_value for node, _ in frontier]
-    from IPython import embed; embed()
     return list(autocomplete_frontier(tokens[-1], frontier))

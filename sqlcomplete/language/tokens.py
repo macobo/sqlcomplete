@@ -1,9 +1,30 @@
 from collections import namedtuple
 
-Literal = namedtuple('Literal', 'thing')
 
-# ALL
-Keyword = namedtuple('Keyword', 'name')
+# ( ) ,
+class Literal(namedtuple('Literal', 'thing')):
+    def match(self, word):
+        if self.thing == word:
+            return Node.FullMatch
+        elif self.thing.startswith(word):
+            return Node.PartialMatch
+        return Node.NoMatch
+
+    def possible_values(self, word):
+        return [self.thing] if self.match(word) != Node.NoMatch else []
+
+# ALL, FROM, SELECT, *
+class Keyword(namedtuple('Keyword', 'name')):
+    def match(self, word):
+        name, word = self.name.lower(), word.lower()
+        if name == word:
+            return Node.FullMatch
+        elif name.startswith(word):
+            return Node.PartialMatch
+        return Node.NoMatch
+
+    def possible_values(self, word):
+        return [self.name] if self.match(word) != Node.NoMatch else []
 
 # column_name
 Variable = namedtuple('Variable', 'name')
@@ -34,3 +55,5 @@ class Either(namedtuple('Either', 'things')):
 
 # something [, ...]
 ManyTimes = namedtuple('ManyTimes', 'thing')
+
+from .graph import *

@@ -12,4 +12,4 @@ parsed = parse(language)
 graph, root = transform_syntax_list(parsed, root_node=EmptyNode())
 
 from sqlcomplete.parse import *
-autocomplete('sel', graph)
+print(autocomplete('sel', graph))

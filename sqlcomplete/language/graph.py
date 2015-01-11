@@ -12,12 +12,11 @@ class Node(object):
     def __init__(self, node_value, children=None):
         # assert type(node_value) in [Keyword, Variable, type(None)]
         self.node_value = node_value
-        # TODO: allow weights for the childs
+        # TODO: allow weights for the children???
         self._children = children if children else []
 
     @property
     def children(self):
-        # TODO: make this sorted, memoized
         return tuple(self._children)
 
     def children_sorted(self):
