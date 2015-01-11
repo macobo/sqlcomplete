@@ -75,7 +75,7 @@ def create_subgraph(syntax_element):
     """ Takes as an argument an Keyword, Variable, Optional, Either or Manytimes
         and returns the root and leaf of the subgraph. """
 
-    if isinstance(syntax_element, Keyword) or isinstance(syntax_element, Variable):
+    if type(syntax_element) in [Keyword, Variable, Literal]:
         # TODO: parse the Variable somehow?
         node = Node(syntax_element)
         return node, node
@@ -94,6 +94,7 @@ def create_subgraph(syntax_element):
         return start, end
     else:
         # Make the subgraph end point to the start, requiring a comma in between!
+        # if not isinstance(syntax_element, ManyTimes): from IPython import embed; embed()
         assert isinstance(syntax_element, ManyTimes), type(syntax_element)
         sub_node_start, sub_node_end = create_subgraph(syntax_element.thing)
 
@@ -108,7 +109,8 @@ def transform_syntax_list(syntax_list, root_node=None):
         Returns the root and end node of the created graph """
     iterator = iter(syntax_list)
     if root_node is None:
-        root_node, end_node = create_subgraph(next(iterator))
+        element = next(iterator)
+        root_node, end_node = create_subgraph(element)
     else:
         end_node = root_node
 

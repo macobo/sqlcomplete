@@ -34,6 +34,15 @@ def test_parse_either():
             (Keyword('D'),))))
 
 
+def test_casual_either():
+    assert parse('A | B') == (Either(((Keyword('A'),), (Keyword('B'),))),)
+    assert parse('A | B | C') == (
+        Either((
+            (Keyword('A'),),
+            (Keyword('B'),),
+            (Keyword('C'),))),)
+
+
 def test_parse_many_times():
     assert parse('SELECT [, ...]') == (ManyTimes(Keyword('SELECT')),)
 
@@ -46,12 +55,12 @@ SELECT [ ALL | DISTINCT [ ON ( expression [, ...] ) ] ]
     assert len(result) == 3
     assert result[0] == Keyword('SELECT')
     assert result[1] == Optional((
-        Either((Keyword('ALL'), Keyword('DISTINCT'))),
+        Either(((Keyword('ALL'),), (Keyword('DISTINCT'),))),
         Optional((
             Keyword('ON'),
-            Keyword('('),
+            Literal('('),
             ManyTimes(Variable('expression')),
-            Keyword(')')))
+            Literal(')')))
     ))
     assert result[2] == ManyTimes(Either((
         (Keyword('*'),),

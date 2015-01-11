@@ -39,13 +39,13 @@ def consume_single(tokens):
 
 def consume(tokens):
     var = consume_single(tokens)
-    if tokens and tokens[0] == '|':
+    while tokens and tokens[0] == '|':
         tokens.pop(0)
         next_var = consume_single(tokens)
-        if isinstance(next_var, Either):
-            return Either(tuple([var] + next_var.things))
+        if isinstance(var, Either):
+            var = Either(var.things + ((next_var,),))
         else:
-            return Either(tuple([var, next_var]))
+            var = Either(((var,), (next_var,)))
     if tokens and tokens[0] == '[,':
         tokens.pop(0)
         assert tokens.pop(0) == '...]'

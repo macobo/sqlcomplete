@@ -8,6 +8,10 @@ def parse_to_subgraph(language):
     assert len(tokens) == 1
     return create_subgraph(tokens[0])
 
+def parse_language(language):
+    tokens = parse(language)
+    return transform_syntax_list(tokens, root_node=EmptyNode())
+
 
 def test_graph_comparison():
     assert Node(1) == Node(1)
@@ -58,3 +62,8 @@ def test_either_subgraph():
             Node(Keyword('BAZ'),
                  children=(end,)),))
     assert start.children[2] == Node(Keyword('WOO'), children=(end,))
+
+
+def test_parse_language():
+    language = "SELECT [ ALL | DISTINCT [ ON ( expression [, ...] ) ] ]"
+    graph = parse_language(language)
