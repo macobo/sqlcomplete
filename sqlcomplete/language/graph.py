@@ -1,7 +1,4 @@
-
 from functools import total_ordering
-from .utils import recursive_repr
-
 
 @total_ordering
 class Node(object):
@@ -14,6 +11,7 @@ class Node(object):
         self.node_value = node_value
         # TODO: allow weights for the children???
         self._children = children if children else []
+        self.mark = None
 
     @property
     def children(self):
@@ -27,7 +25,7 @@ class Node(object):
     @property
     def key(self):
         "Key for this node, used for hashing and establishing ordering."
-        return (self.node_value, self.children)
+        return (self.node_value, self.mark)
 
     def add_child(self, node):
         self._children_sorted = None
@@ -44,7 +42,7 @@ class Node(object):
 
     # Make the node type hashable
     def __hash__(self):
-        return hash(self.node_value)
+        return hash(self.key)
 
     def __eq__(self, other):
         return self.node_value == other.node_value
@@ -54,7 +52,7 @@ class Node(object):
 
     # @recursive_repr()
     def __repr__(self):
-        return "Node(%r)" % (self.node_value,)
+        return "Node(%r at %r)" % (self.node_value, self.mark)
 
 # Used for groupings
 #
@@ -71,7 +69,7 @@ class EmptyNode(Node):
         Node.__init__(self, tuple(), children)
 
     def __repr__(self):
-        return "Node()"
+        return "Node(%r)" % (self.mark,)
 
 # TODO: merge two graphs
 
@@ -125,3 +123,17 @@ def transform_syntax_list(syntax_list, root_node=None):
         end_node.add_child(start)
         end_node = new_end
     return root_node, end_node
+
+
+# Mark all the nodes in the graph
+def mark_graph(root, depth=0):
+    if not root.mark:
+        root.mark = (depth, 0)
+
+    print "visiting", root
+    i = 0
+    for child in root.children:
+        if not child.mark:
+            child.mark = (depth+1, i)
+            mark_graph(child, depth+1)
+            i += 1

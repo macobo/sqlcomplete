@@ -9,15 +9,16 @@ def active_node(path):
 
 def children_of(active_frontier):
     Q = deque(active_frontier)
-    visited = set(active_frontier)
+    visited = set(map(active_node, active_frontier))
     while Q:
         path = Q.pop()
         node = active_node(path)
-        # print "pop", path, lens(Q)
+        print "pop", path, len(Q)
         for child in node.children:
             next_path = path + (child,)
-            if True:#next_path not in visited:
-                visited.add(next_path)
+            print child, visited, child in visited, child.key
+            if child not in visited:
+                visited.add(child)
                 if isinstance(child, EmptyNode):
                     Q.appendleft(next_path)
                 else:
