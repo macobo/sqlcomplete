@@ -1,5 +1,5 @@
 from collections import namedtuple
-
+from .graph import Node
 
 # ( ) ,
 class Literal(namedtuple('Literal', 'thing')):
@@ -27,7 +27,12 @@ class Keyword(namedtuple('Keyword', 'name')):
         return [self.name] if self.match(word) != Node.NoMatch else []
 
 # column_name
-Variable = namedtuple('Variable', 'name')
+class Variable(namedtuple('Variable', 'name')):
+    def match(self, word):
+        return Node.NoMatch
+
+    def possible_values(self, word):
+        return []
 
 # [ something something ]
 Optional = namedtuple('Optional', 'things')
@@ -55,5 +60,3 @@ class Either(namedtuple('Either', 'things')):
 
 # something [, ...]
 ManyTimes = namedtuple('ManyTimes', 'thing')
-
-from .graph import *

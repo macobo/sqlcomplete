@@ -1,4 +1,4 @@
-from .tokens import *
+
 from functools import total_ordering
 from .utils import recursive_repr
 
@@ -44,17 +44,17 @@ class Node(object):
 
     # Make the node type hashable
     def __hash__(self):
-        return hash((self.node_value,))
+        return hash(self.node_value)
 
     def __eq__(self, other):
-        return self.key == other.key
+        return self.node_value == other.node_value
 
     def __lt__(self, other):
-        return self.key < other.key
+        return self.node_value < other.node_value
 
-    @recursive_repr()
+    # @recursive_repr()
     def __repr__(self):
-        return "Node(node_value=%r, children=%r)" % self.key
+        return "Node(%r)" % (self.node_value,)
 
 # Used for groupings
 #
@@ -70,12 +70,16 @@ class EmptyNode(Node):
     def __init__(self, children=None):
         Node.__init__(self, tuple(), children)
 
+    def __repr__(self):
+        return "Node()"
+
 # TODO: merge two graphs
 
 
 def create_subgraph(syntax_element):
     """ Takes as an argument an Keyword, Variable, Optional, Either or Manytimes
         and returns the root and leaf of the subgraph. """
+    from .tokens import Keyword, Variable, Literal, Either, Optional, ManyTimes
 
     if type(syntax_element) in [Keyword, Variable, Literal]:
         # TODO: parse the Variable somehow?
