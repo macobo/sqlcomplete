@@ -13,10 +13,10 @@ def children_of(active_frontier):
     while Q:
         path = Q.pop()
         node = active_node(path)
-        print "pop", path, len(Q)
+        # print "pop", path, len(Q)
         for child in node.children:
             next_path = path + (child,)
-            print child, visited, child in visited, child.key
+            # print child, visited, child in visited, child.key
             if child not in visited:
                 visited.add(child)
                 if isinstance(child, EmptyNode):
@@ -33,7 +33,7 @@ def next_frontier(word, frontier, options):
         signifies if the word is a full match and last of nodes is not empty.
     """
     children = list(children_of(path for (path, complete) in frontier if complete))
-    print map(active_node, children)
+    # print map(active_node, children)
     for path in children:
         node = active_node(path)
         match_type = node.match(word)

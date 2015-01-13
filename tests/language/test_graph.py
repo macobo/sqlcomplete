@@ -1,16 +1,16 @@
 # Tests for language graph construction from pieces from the parser
 from sqlcomplete.language.graph import *
-from sqlcomplete.language.parser import *
+from sqlcomplete.language.lexer import *
 
 
 def parse_to_subgraph(language):
-    tokens = parse(language)
+    tokens = lex(language)
     assert len(tokens) == 1
     return create_subgraph(tokens[0])
 
 
 def parse_language(language):
-    tokens = parse(language)
+    tokens = lex(language)
     return transform_syntax_list(tokens, root_node=EmptyNode())
 
 

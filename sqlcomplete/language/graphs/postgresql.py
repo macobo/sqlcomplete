@@ -1,5 +1,5 @@
 from os.path import join, dirname, abspath
-from sqlcomplete.language.parser import parse
+from sqlcomplete.language.lexer import preprocess
 from sqlcomplete.language.graph import transform_syntax_list, EmptyNode, mark_graph
 __all__ = ['graph', 'autocomplete']
 
@@ -8,8 +8,8 @@ definition_path = join(dirname(dirname(abspath(__file__))), 'definition', 'postg
 with open(definition_path) as f:
     language = f.read()
 
-parsed = parse(language)
-graph, root = transform_syntax_list(parsed, root_node=EmptyNode())
+parsed = preprocess(language)
+graph, root = transform_syntax_list(parsed['select_statement'][0], root_node=EmptyNode())
 mark_graph(graph)
 
 from sqlcomplete.parse import *

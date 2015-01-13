@@ -45,10 +45,10 @@ class Node(object):
         return hash(self.key)
 
     def __eq__(self, other):
-        return self.node_value == other.node_value
+        return self.key == other.key
 
     def __lt__(self, other):
-        return self.node_value < other.node_value
+        return self.key < other.key
 
     # @recursive_repr()
     def __repr__(self):
@@ -130,7 +130,6 @@ def mark_graph(root, depth=0):
     if not root.mark:
         root.mark = (depth, 0)
 
-    print "visiting", root
     i = 0
     for child in root.children:
         if not child.mark:
