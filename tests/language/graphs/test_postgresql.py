@@ -4,7 +4,9 @@ queries = [
     ('SELEC', ['SELECT']),
     ('sElEc', ['SELECT']),
     ('select * fro', ['FROM']),
-    ('select * from table order by attr a', ['ASC'])
+    ('select * from table order by attr a', ['ASC']),
+    ('select column from table o', ['ORDER', 'OFFSET']),
+    ('in', ['INSERT'])
 ]
 
 

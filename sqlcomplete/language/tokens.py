@@ -26,6 +26,15 @@ class Keyword(namedtuple('Keyword', 'name')):
     def possible_values(self, word):
         return [self.name] if self.match(word) != Node.NoMatch else []
 
+    @staticmethod
+    def read_joined(token, tokens):
+        if not token.isupper():
+            return Keyword(token)
+        result = [token]
+        while tokens and tokens[0].isupper():
+            result.append(tokens.pop(0))
+        return Keyword(name=" ".join(result))
+
 # column_name
 class Variable(namedtuple('Variable', 'name')):
     def match(self, word):
@@ -45,7 +54,12 @@ class Either(namedtuple('Either', 'things')):
         from .lexer import consume_single
         result = []
         while tokens and tokens[0] != '|':
-            result.append(consume_single(tokens))
+            var = consume_single(tokens)
+            if tokens and tokens[0] == '[,':
+                tokens.pop(0)
+                assert tokens.pop(0) == '...]'
+                var = ManyTimes(var)
+            result.append(var)
         assert len(result) > 0
         return tuple(result)
 

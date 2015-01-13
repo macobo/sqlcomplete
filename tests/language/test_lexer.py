@@ -58,6 +58,15 @@ def test_lex_either():
             (Keyword('C'),),
             (Keyword('D'),))))
 
+def test_lex_nested_either():
+    assert lex('{ A | { B | C } }') == (
+        Either((
+            (Keyword('A'),),
+            (Either((
+                (Keyword('B'),),
+                (Keyword('C'),))),),
+            )),)
+
 
 def test_casual_either():
     assert lex('A | B') == (Either(((Keyword('A'),), (Keyword('B'),))),)

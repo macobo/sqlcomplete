@@ -31,6 +31,7 @@ def consume_single(tokens):
         # print '\t\t%s' % ' '.join(sub_tokens)
         return Either.split_and_parse(sub_tokens)
     if token in '*' or token.isupper():
+        # return Keyword.read_joined(token, tokens)
         return Keyword(token)
     elif token in '()':
         return Literal(token)

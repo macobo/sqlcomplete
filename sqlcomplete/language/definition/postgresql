@@ -6,7 +6,7 @@ statements are
 select_statement is
     SELECT [ ALL | DISTINCT [ ON ( expression [, ...] ) ] ]
         { * | expression [ [ AS ] output_name ] } [, ...]
-        [ FROM from_item [, ...] ]
+        [ FROM select_from_item [, ...] ]
         [ WHERE condition ]
         [ GROUP BY expression [, ...] ]
         [ HAVING condition [, ...] ]
@@ -14,3 +14,16 @@ select_statement is
         [ ORDER BY expression { ASC | DESC | USING operator } [ NULLS { FIRST | LAST } ] [, ...] ]
         [ LIMIT { count | ALL } ]
         [ OFFSET start [ ROW | ROWS ] ]
+
+select_from_item are
+    [ ONLY ] table_name [ * ] [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+    ( select ) [ AS ] alias [ ( column_alias [, ...] ) ]
+    with_query_name [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+    #function_name ( [ argument [, ...] ] ) [ AS ] alias [ ( column_alias [, ...] | column_definition [, ...] ) ]
+    function_name ( [ argument [, ...] ] ) AS ( column_definition [, ...] )
+    from_item [ NATURAL ] join_type from_item [ ON join_condition | USING ( join_column [, ...] ) ]
+
+insert_statement is
+    INSERT INTO table [ ( column [, ...] ) ]
+        { DEFAULT VALUES | VALUES ( { expression | DEFAULT } [, ...] ) | query }
+        [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]

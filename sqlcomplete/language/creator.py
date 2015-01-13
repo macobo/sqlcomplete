@@ -1,4 +1,4 @@
-from .graph import transform_syntax_list, EmptyNode
+from .graph import transform_syntax_list
 from .tokens import Variable
 from collections import defaultdict
 
@@ -13,7 +13,9 @@ def create_graph(language_definition):
     definitions = preprocess(language_definition)
     graphs = {}
     for key, value in definitions.items():
-        graphs[key] = transform_syntax_list(value, root_node=EmptyNode(tag="source_"+key))
+        graphs[key] = source, sink = transform_syntax_list(value)
+        source.tag = "source_{}".format(key)
+        sink.tag = "sink_{}".format(key)
     keywords = keyword_map(graphs.values())
 
     for definition, subgraph in graphs.items():
