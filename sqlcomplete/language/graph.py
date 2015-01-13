@@ -1,20 +1,22 @@
-from functools import total_ordering
+# from functools import total_ordering
 
-@total_ordering
+# Sadly not present under py2.6
+# @total_ordering
 class Node(object):
     NoMatch = 0
     PartialMatch = 1
     FullMatch = 2
 
-    def __init__(self, value, children=None):
-        # assert type(value) in [Keyword, Variable, type(None)]
+    def __init__(self, value, children=None, tag=None):
+        from .tokens import Keyword, Variable, Literal
+        assert type(value) in [Keyword, Variable, Literal, tuple]
         self.value = value
         # TODO: allow weights for the children???
         self._children = []
         self._parents = []
         for child in children or []:
             self.add_child(child)
-        self.tag = None
+        self.tag = tag
 
     @property
     def children(self):
@@ -27,7 +29,7 @@ class Node(object):
     @property
     def key(self):
         "Key for this node, used for hashing and establishing ordering."
-        return (self.value,)
+        return (self.value, self.children)
 
     def add_child(self, node):
         self._children.append(node)
@@ -73,8 +75,8 @@ class Node(object):
 
 class EmptyNode(Node):
 
-    def __init__(self, children=None):
-        Node.__init__(self, tuple(), children)
+    def __init__(self, *args, **kw):
+        Node.__init__(self, tuple(), *args, **kw)
 
     def __repr__(self):
         format_ = "Node()"
@@ -97,11 +99,11 @@ def create_subgraph(syntax_element):
     elif isinstance(syntax_element, Optional):
         sub_node_start, sub_node_end = transform_syntax_list(syntax_element.things)
         end = EmptyNode([])
-        start = EmptyNode([sub_node_start, end])
+        start = EmptyNode([sub_node_start, end], tag="Opt")
         sub_node_end.add_child(end)
         return start, end
     elif isinstance(syntax_element, Either):
-        start, end = EmptyNode(), EmptyNode()
+        start, end = EmptyNode(tag="Either"), EmptyNode()
         for child in syntax_element.things:
             # nope - this should be something like parse_syntax_list!
             sub_start, sub_end = transform_syntax_list(child, root_node=start)

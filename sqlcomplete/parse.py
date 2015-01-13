@@ -17,10 +17,9 @@ def children_of(active_frontier):
     while Q:
         path = Q.pop()
         node = active_node(path)
-        _logger.debug("%r", path)
+        # _logger.debug("%r", path)
         for child in node.children:
             next_path = path + (child,)
-            # print child, visited, child in visited, child.key
             if id(child) not in visited:
                 visited.add(id(child))
                 if isinstance(child, EmptyNode):
@@ -70,7 +69,8 @@ def autocomplete(query, language_root):
     tokens = parse_sql(query)
     frontier = start_frontier(language_root)
     for token in tokens:
-        _logger.debug("%r %r", token, frontier)
+        from pprint import pformat
+        _logger.debug("-- %r --\n%s", token, pformat(frontier))
         frontier = list(next_frontier(token, frontier, {}))
 
     return list(autocomplete_frontier(tokens[-1], frontier))

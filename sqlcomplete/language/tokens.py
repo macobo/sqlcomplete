@@ -29,7 +29,7 @@ class Keyword(namedtuple('Keyword', 'name')):
 # column_name
 class Variable(namedtuple('Variable', 'name')):
     def match(self, word):
-        return Node.NoMatch
+        return Node.FullMatch
 
     def possible_values(self, word):
         return []
@@ -42,7 +42,7 @@ Optional = namedtuple('Optional', 'things')
 class Either(namedtuple('Either', 'things')):
     @staticmethod
     def consume_multiple(tokens):
-        from .parser import consume_single
+        from .lexer import consume_single
         result = []
         while tokens and tokens[0] != '|':
             result.append(consume_single(tokens))

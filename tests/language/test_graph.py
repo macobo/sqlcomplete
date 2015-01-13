@@ -15,7 +15,6 @@ def parse_language(language):
 
 
 def test_graph_comparison():
-    assert Node(1) == Node(1)
     a = Node(Keyword('A'))
     assert a == Node(Keyword('A'))
     assert a != Node(Keyword('A'), (Node(Keyword('B')),))

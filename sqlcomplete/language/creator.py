@@ -13,14 +13,14 @@ def create_graph(language_definition):
     definitions = preprocess(language_definition)
     graphs = {}
     for key, value in definitions.items():
-        graphs[key] = transform_syntax_list(value, root_node=EmptyNode())
+        graphs[key] = transform_syntax_list(value, root_node=EmptyNode(tag="source_"+key))
     keywords = keyword_map(graphs.values())
 
     for definition, subgraph in graphs.items():
         for node in keywords[definition]:
             replace_node(node, subgraph)
-            node.tag = definition
 
+    graphs['statements'][1].tag = 'sink'
     return graphs['statements']
 
 
@@ -46,15 +46,17 @@ def replace_node(node, subgraph):
     " Replace a node within a graph with a new subgraph "
     source, sink = subgraph
     for parent in node.parents:
+        source._parents.append(parent)
         replace(parent._children, node, source)
     for child in node.children:
+        sink._children.append(child)
         replace(child._parents, node, sink)
 
 
 def keyword_map(graphs):
     " Create a list of name -> [nodes...] for each Variable in graphs"
     result = defaultdict(list)
-    for i, (source, sink) in enumerate(graphs):
+    for source, sink in graphs:
         for node in walk(source):
             if isinstance(node.value, Variable):
                 result[node.value.name].append(node)

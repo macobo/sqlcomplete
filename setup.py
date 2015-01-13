@@ -17,7 +17,7 @@ setup(
     version=version,
     license='LICENSE',
     packages=find_packages(),
-    # package_data={'pgcli': ['pgclirc']},
+    package_data={'sqlcomplete': ['language/definition/postgresql']},
     description=description,
     # long_description=open('README.rst').read(),
     install_requires=[
