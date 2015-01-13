@@ -1,5 +1,4 @@
 import pytest
-from sqlcomplete.language.graphs.postgresql import autocomplete
 
 queries = [
     ('SELEC', ['SELECT']),
@@ -14,5 +13,6 @@ def query(request):
     return request.param
 
 def test_autocomplete(query):
+    from sqlcomplete.language.graphs.postgresql import autocomplete
     q, expected = query
     assert autocomplete(q) == expected

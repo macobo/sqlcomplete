@@ -1,6 +1,10 @@
 import re
+import logging
 from collections import deque
 from .language.graph import Node, EmptyNode
+
+_logger = logging.getLogger(__name__)
+
 
 # Frontier - collection of Path, complete_match objects.
 
@@ -9,16 +13,16 @@ def active_node(path):
 
 def children_of(active_frontier):
     Q = deque(active_frontier)
-    visited = set(map(active_node, active_frontier))
+    visited = set(map(id, map(active_node, active_frontier)))
     while Q:
         path = Q.pop()
         node = active_node(path)
-        # print "pop", path, len(Q)
+        _logger.debug("%r", path)
         for child in node.children:
             next_path = path + (child,)
             # print child, visited, child in visited, child.key
-            if child not in visited:
-                visited.add(child)
+            if id(child) not in visited:
+                visited.add(id(child))
                 if isinstance(child, EmptyNode):
                     Q.appendleft(next_path)
                 else:
@@ -66,7 +70,7 @@ def autocomplete(query, language_root):
     tokens = parse_sql(query)
     frontier = start_frontier(language_root)
     for token in tokens:
-        print token, frontier
+        _logger.debug("%r %r", token, frontier)
         frontier = list(next_frontier(token, frontier, {}))
 
     return list(autocomplete_frontier(tokens[-1], frontier))

@@ -112,12 +112,17 @@ others are
     THING
     REST
 """
-    assert preprocess(language) == {
-        'something': [(Either((
+    result = preprocess(language)
+    assert result == {
+        'something': (Either((
             (Keyword('NUMBER'),),
-            (Keyword('STATEMENT'),))),)],
-        'others': [
+            (Keyword('STATEMENT'),))),),
+        'others': (Either((
             (Keyword('THING'),),
             (Keyword('REST'),)
-        ]
+        )),)
     }
+    assert result['something'] == lex('NUMBER | STATEMENT')
+    assert result['others'] == (
+        Either((lex('THING'), lex('REST'))),
+    )

@@ -1,5 +1,5 @@
-from .graph import transform_syntax_list
-from .tokens import Keyword
+from .graph import transform_syntax_list, EmptyNode
+from .tokens import Variable
 from collections import defaultdict
 
 
@@ -11,12 +11,15 @@ def create_graph(language_definition):
 
     from .lexer import preprocess
     definitions = preprocess(language_definition)
-    graphs = dict((key, transform_syntax_list(value)) for key, value in definitions.items())
-    keywords = keyword_map(graphs)
+    graphs = {}
+    for key, value in definitions.items():
+        graphs[key] = transform_syntax_list(value, root_node=EmptyNode())
+    keywords = keyword_map(graphs.values())
 
     for definition, subgraph in graphs.items():
         for node in keywords[definition]:
             replace_node(node, subgraph)
+            node.tag = definition
 
     return graphs['statements']
 
@@ -49,10 +52,10 @@ def replace_node(node, subgraph):
 
 
 def keyword_map(graphs):
-    " Create a list of name -> [nodes...] for each keyword in graphs"
+    " Create a list of name -> [nodes...] for each Variable in graphs"
     result = defaultdict(list)
-    for graph in graphs:
-        for node in walk(graph):
-            if isinstance(node.value, Keyword):
+    for i, (source, sink) in enumerate(graphs):
+        for node in walk(source):
+            if isinstance(node.value, Variable):
                 result[node.value.name].append(node)
     return result

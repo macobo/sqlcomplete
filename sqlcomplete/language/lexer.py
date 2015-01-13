@@ -134,7 +134,6 @@ def partition(language_definition):
 
 
 def rejoin_partitioned(partition, indent=0):
-    print partition
     root, children = partition
     result = root
     if children:
@@ -150,5 +149,9 @@ def preprocess(language_definition):
         if amount == 'is' and len(parts) != 1:
             _logger.warn("Language definition for node %r has %r children"
                          "should have 1", name, len(parts))
-        result[name] = [lex(rejoin_partitioned(p)) for p in parts]
+        values = [lex(rejoin_partitioned(p)) for p in parts]
+        if len(values) > 1:
+            result[name] = (Either(tuple(values)),)
+        else:
+            result[name] = values[0]
     return result

@@ -14,7 +14,7 @@ class Node(object):
         self._parents = []
         for child in children or []:
             self.add_child(child)
-        self.mark = None
+        self.tag = None
 
     @property
     def children(self):
@@ -27,7 +27,7 @@ class Node(object):
     @property
     def key(self):
         "Key for this node, used for hashing and establishing ordering."
-        return (self.value, self.mark)
+        return (self.value,)
 
     def add_child(self, node):
         self._children.append(node)
@@ -57,7 +57,10 @@ class Node(object):
 
     # @recursive_repr()
     def __repr__(self):
-        return "Node(%r at %r)" % (self.value, self.mark)
+        format_ = "Node({value})"
+        if self.tag:
+            format_ = "Node({value}, tag={tag})"
+        return format_.format(value=self.value, tag=self.tag)
 
 # Used for groupings
 #
@@ -74,7 +77,10 @@ class EmptyNode(Node):
         Node.__init__(self, tuple(), children)
 
     def __repr__(self):
-        return "Node(%r)" % (self.mark,)
+        format_ = "Node()"
+        if self.tag:
+            format_ = "Node(tag={tag})"
+        return format_.format(tag=self.tag)
 
 # TODO: merge two graphs
 
@@ -114,7 +120,7 @@ def create_subgraph(syntax_element):
 
 
 def transform_syntax_list(syntax_list, root_node=None):
-    """ Transform a list of syntax elements to a language graph.
+    """ Transform a tuple of syntax elements to a language graph.
         Returns the root and end node of the created graph """
     iterator = iter(syntax_list)
     if root_node is None:
