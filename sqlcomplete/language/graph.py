@@ -6,39 +6,44 @@ class Node(object):
     PartialMatch = 1
     FullMatch = 2
 
-    def __init__(self, node_value, children=None):
-        # assert type(node_value) in [Keyword, Variable, type(None)]
-        self.node_value = node_value
+    def __init__(self, value, children=None):
+        # assert type(value) in [Keyword, Variable, type(None)]
+        self.value = value
         # TODO: allow weights for the children???
-        self._children = children if children else []
+        self._children = []
+        self._parents = []
+        for child in children or []:
+            self.add_child(child)
         self.mark = None
 
     @property
     def children(self):
         return tuple(self._children)
 
-    def children_sorted(self):
-        if not getattr(self, '_children_sorted', None):
-            self._children_sorted = tuple(sorted(self._children))
-        return self._children_sorted
+    @property
+    def parents(self):
+        return tuple(self._parents)
 
     @property
     def key(self):
         "Key for this node, used for hashing and establishing ordering."
-        return (self.node_value, self.mark)
+        return (self.value, self.mark)
 
     def add_child(self, node):
-        self._children_sorted = None
         self._children.append(node)
+        node.add_parent(self)
+
+    def add_parent(self, node):
+        self._parents.append(node)
 
     # Matching
     def match(self, word):
         assert not isinstance(self, EmptyNode)
-        return self.node_value.match(word)
+        return self.value.match(word)
 
     def possible_values(self, word):
         assert not isinstance(self, EmptyNode)
-        return self.node_value.possible_values(word)
+        return self.value.possible_values(word)
 
     # Make the node type hashable
     def __hash__(self):
@@ -52,7 +57,7 @@ class Node(object):
 
     # @recursive_repr()
     def __repr__(self):
-        return "Node(%r at %r)" % (self.node_value, self.mark)
+        return "Node(%r at %r)" % (self.value, self.mark)
 
 # Used for groupings
 #
@@ -123,16 +128,3 @@ def transform_syntax_list(syntax_list, root_node=None):
         end_node.add_child(start)
         end_node = new_end
     return root_node, end_node
-
-
-# Mark all the nodes in the graph
-def mark_graph(root, depth=0):
-    if not root.mark:
-        root.mark = (depth, 0)
-
-    i = 0
-    for child in root.children:
-        if not child.mark:
-            child.mark = (depth+1, i)
-            mark_graph(child, depth+1)
-            i += 1
