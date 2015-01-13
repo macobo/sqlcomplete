@@ -3,6 +3,7 @@ import pytest
 queries = [
     ('SELEC', ['SELECT']),
     ('sElEc', ['SELECT']),
+    ('SELECT', []),
     ('select * fro', ['FROM']),
     ('select * from table order by attr a', ['ASC']),
     ('select column from table o', ['ORDER', 'OFFSET']),
