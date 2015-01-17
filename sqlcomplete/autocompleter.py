@@ -55,7 +55,7 @@ def next_frontier(word, frontier, evaluator):
             # assumes the subtree starts with an empty node!
             sub_root = evaluator.get_subtree(node.value)
             # recurse here!
-            _recursive_front.append((path + (sub_root,), stack+[node], True))
+            _recursive_front.append((path + (sub_root,), stack + [node], True))
         elif node.is_sink():
             if len(stack) == 0:
                 continue
@@ -74,10 +74,15 @@ def next_frontier(word, frontier, evaluator):
 
 
 def autocomplete_frontier(word, frontier):
+    given = set()
     for path, stack, full_match in frontier:
         node = active_node(path)
         if not full_match:
             for suggestion in node.possible_values(word):
+                # skip multiple suggestions with the same text
+                if suggestion in given:
+                    continue
+                given.add(suggestion)
                 yield suggestion
 
 parse_pattern = re.compile('''\
@@ -107,8 +112,10 @@ def _autocomplete(tokens, node, evaluator):
             break
         tokens.pop(0)
 
-    if tokens:
+    if tokens or not frontier:
         return []
+    # for (path, stack, complete) in frontier:
+    #     log.debug("%r", path)
     return list(autocomplete_frontier(token, frontier))
 
 
@@ -117,3 +124,8 @@ def autocomplete(query, language_root, evaluator):
         the query. """
     tokens = parse_sql(query)
     return _autocomplete(tokens, language_root, evaluator)
+
+
+def last_token(query):
+    tokens = parse_sql(query)
+    return tokens[-1] if tokens else None

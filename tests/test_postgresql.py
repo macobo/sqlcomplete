@@ -5,6 +5,7 @@ queries = [
     ('sElEc', ['SELECT']),
     ('SELECT', []),
     ('select * fro', ['FROM']),
+    ('select * from table a', ['AS']),
     ('select * from table order by attr as', ['ASC']),
     ('select column from table o', ['ORDER', 'OFFSET']),
     ('in', ['INSERT']),
@@ -19,6 +20,6 @@ def query(request):
 
 
 def test_autocomplete(query):
-    from sqlcomplete.language.graphs.postgresql import autocomplete
+    from sqlcomplete.postgresql import autocomplete
     q, expected = query
     assert autocomplete(q) == expected

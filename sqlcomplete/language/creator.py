@@ -7,7 +7,7 @@ from collections import defaultdict
 
 def create_graph(language_definition):
     """ Take in a stringified language definition and return the unified
-    language graph. 
+    language graph.
 
     Language definition starts from definition `statements`. """
 
