@@ -17,7 +17,7 @@ select_statement is
 
 select_from_item are
     [ ONLY ] table_name [ * ] [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
-    ( select ) [ AS ] alias [ ( column_alias [, ...] ) ]
+    ( select_statement ) [ AS ] alias [ ( column_alias [, ...] ) ]
     with_query_name [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
     #function_name ( [ argument [, ...] ] ) [ AS ] alias [ ( column_alias [, ...] | column_definition [, ...] ) ]
     function_name ( [ argument [, ...] ] ) AS ( column_definition [, ...] )

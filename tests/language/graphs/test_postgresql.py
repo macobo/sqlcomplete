@@ -7,7 +7,9 @@ queries = [
     ('select * fro', ['FROM']),
     ('select * from table order by attr as', ['ASC']),
     ('select column from table o', ['ORDER', 'OFFSET']),
-    ('in', ['INSERT'])
+    ('in', ['INSERT']),
+    ('select * from (s', ['SELECT']),
+    ('select * from (select * from table) a', ['AS'])
 ]
 
 

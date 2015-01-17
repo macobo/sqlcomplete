@@ -1,6 +1,5 @@
 from os.path import join, dirname, abspath
 from sqlcomplete.language.creator import create_graph
-__all__ = ['graph', 'autocomplete', 'subgraphs']
 
 definition_path = join(dirname(dirname(abspath(__file__))), 'definition', 'postgresql')
 
