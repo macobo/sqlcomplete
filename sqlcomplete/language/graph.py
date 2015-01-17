@@ -31,6 +31,10 @@ class Node(object):
         "Key for this node, used for hashing and establishing ordering."
         return (self.value, self.children)
 
+    def is_sink(self):
+        " Is this node the lowermost node in its subgraph? "
+        return len(self.children) == 0
+
     def add_child(self, node):
         self._children.append(node)
         node.add_parent(self)

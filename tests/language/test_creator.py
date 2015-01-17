@@ -6,7 +6,7 @@ statements are
     A B
     C D
 """
-    source, sink = create_graph(lang)
+    (source, sink), _ = create_graph(lang)
     seen = set()
     for node in walk(source):
         if node.value:
@@ -26,7 +26,7 @@ simple is
 complex is
     COMPLEX
 """
-    source, sink = create_graph(lang)
+    (source, sink), _ = create_graph(lang)
     seen = set()
     for node in walk(source):
         if node.value:

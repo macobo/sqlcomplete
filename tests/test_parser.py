@@ -1,4 +1,4 @@
-from sqlcomplete.parse import *
+from sqlcomplete.autocompleter import *
 
 
 def test_parser():
