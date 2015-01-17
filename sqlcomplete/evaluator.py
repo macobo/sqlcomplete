@@ -1,3 +1,5 @@
+from .language.tokens import Variable
+
 class Evaluator(object):
     " Evaluate variables "
 
@@ -9,7 +11,11 @@ class Evaluator(object):
         return variable.name in self.graphs
 
     def get_subtree(self, variable):
-        return self.graphs[variable.name]
+        if isinstance(variable, Variable):
+            name = variable.name
+        else:
+            name = variable
+        return self.graphs[name][0]
 
     def get(self, variable, partial=None):
         """ Return either a subtree (Node object) or a list of potential matches

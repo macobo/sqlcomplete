@@ -1,8 +1,10 @@
 from graphviz import Digraph
 dot = Digraph(comment="postgresql", format='svg')
-from sqlcomplete.language.graphs.postgresql import subgraphs
+from sqlcomplete.language.graphs.postgresql import evaluator
 from sqlcomplete.language.creator import walk, keyword_map
 
+
+subgraphs = evaluator.graphs
 kwmap = keyword_map(subgraphs.values())
 
 for key in sorted(subgraphs):

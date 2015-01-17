@@ -40,8 +40,8 @@ def next_frontier(word, frontier, evaluator):
 
         A frontier is a tuple of (path, stack, full_match).
             `path` - list of Nodes went through in graph (last one is active)
-            `stack` - manually managed recursion stack for recursing into subgraphs
-            `full_match` - if the match at this node was complete. If not, this 
+            `stack` - managed recursion stack for recursing into subgraphs
+            `full_match` - if the match at this node was complete. If not, this
                 subgraph will not be visited further.
     """
     children = list(children_of((path, stack) for path, stack, complete in frontier if complete))
@@ -53,7 +53,7 @@ def next_frontier(word, frontier, evaluator):
         if isinstance(node.value, Variable) and evaluator.is_subtree(node.value):
             # if is a subtree, recurse into it!
             # assumes the subtree starts with an empty node!
-            sub_root, _ = evaluator.get_subtree(node.value)
+            sub_root = evaluator.get_subtree(node.value)
             # recurse here!
             _recursive_front.append((path + (sub_root,), stack+[node], True))
         elif node.is_sink():

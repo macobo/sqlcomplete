@@ -7,12 +7,9 @@ definition_path = join(dirname(dirname(abspath(__file__))), 'definition', 'postg
 with open(definition_path) as f:
     language = f.read()
 
-(graph, sink), subgraphs = create_graph(language)
+(graph, sink), evaluator = create_graph(language)
 from sqlcomplete.autocompleter import *
 from sqlcomplete.autocompleter import autocomplete as complete
-from sqlcomplete.evaluator import Evaluator
-
-evaluator = Evaluator(graphs=subgraphs)
 
 
 def autocomplete(query):
