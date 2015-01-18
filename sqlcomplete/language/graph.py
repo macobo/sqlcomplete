@@ -43,13 +43,24 @@ class Node(object):
         self._parents.append(node)
 
     # Matching
-    def match(self, word):
+    def match(self, word, evaluator):
         assert not isinstance(self, EmptyNode)
-        return self.value.match(word)
+        return self.value.match(word, evaluator)
 
-    def possible_values(self, word):
+    def possible_values(self, word, evaluator):
         assert not isinstance(self, EmptyNode)
-        return self.value.possible_values(word)
+        return self.value.possible_values(word, evaluator)
+
+    @staticmethod
+    def best_match_type(word, matches):
+        best_match = Node.NoMatch
+        for w in matches:
+            if w == word:
+                return Node.FullMatch
+            elif w.startswith(word):
+                best_match = Node.PartialMatch
+        return best_match
+
 
     # Make the node type hashable
     def __hash__(self):
@@ -105,7 +116,6 @@ def create_subgraph(syntax_element):
         end = EmptyNode([])
         start = EmptyNode([sub_node_start, end], tag="Opt")
         sub_node_end.add_child(end)
-        end.tag = 'optional.end'
         return start, end
     elif isinstance(syntax_element, Either):
         start, end = EmptyNode(tag="Either"), EmptyNode()

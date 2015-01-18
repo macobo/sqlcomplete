@@ -147,9 +147,6 @@ def preprocess(language_definition):
     result = {}
     for first_line, parts in partition(language_definition):
         name, amount = first_line.split()
-        if amount == 'is' and len(parts) != 1:
-            _logger.warn("Language definition for node %r has %r children"
-                         "should have 1", name, len(parts))
         values = [lex(rejoin_partitioned(p)) for p in parts]
         if len(values) > 1:
             result[name] = (Either(tuple(values)),)

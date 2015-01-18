@@ -3,19 +3,19 @@ from .graph import Node
 
 # ( ) ,
 class Literal(namedtuple('Literal', 'thing')):
-    def match(self, word):
+    def match(self, word, evaluator=None):
         if self.thing == word:
             return Node.FullMatch
         elif self.thing.startswith(word):
             return Node.PartialMatch
         return Node.NoMatch
 
-    def possible_values(self, word):
+    def possible_values(self, word, evaluator):
         return [self.thing] if self.match(word) != Node.NoMatch else []
 
 # ALL, FROM, SELECT, *
 class Keyword(namedtuple('Keyword', 'name')):
-    def match(self, word):
+    def match(self, word, evaluator=None):
         name, word = self.name.lower(), word.lower()
         if name == word:
             return Node.FullMatch
@@ -23,7 +23,7 @@ class Keyword(namedtuple('Keyword', 'name')):
             return Node.PartialMatch
         return Node.NoMatch
 
-    def possible_values(self, word):
+    def possible_values(self, word, evaluator):
         return [self.name] if self.match(word) != Node.NoMatch else []
 
     @staticmethod
@@ -37,11 +37,20 @@ class Keyword(namedtuple('Keyword', 'name')):
 
 # column_name
 class Variable(namedtuple('Variable', 'name')):
-    def match(self, word):
-        return Node.FullMatch
+    def match(self, word, evaluator):
+        if evaluator.has_variable(self):
+            possible_values = evaluator.get_matches(self, word)
+            return Node.best_match_type(word, possible_values)
+        else:
+            return Node.FullMatch
 
-    def possible_values(self, word):
-        return []
+    def possible_values(self, word, evaluator):
+        print self
+        if evaluator.has_variable(self):
+
+            return evaluator.get_matches(self, word)
+        else:
+            return []
 
 # [ something something ]
 Optional = namedtuple('Optional', 'things')

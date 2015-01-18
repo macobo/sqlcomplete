@@ -45,7 +45,7 @@ def next_frontier(word, frontier, evaluator):
                 subgraph will not be visited further.
     """
     children = list(children_of(f for f in frontier if f[2]))
-    log.debug("%r: %r, %r", word, children, frontier)
+    # log.debug("%r: %r, %r", word, children, frontier)
 
     _recursive_front = []
     for path, stack, _ in children:
@@ -66,25 +66,24 @@ def next_frontier(word, frontier, evaluator):
             log.debug("Popping out of %r", popped_node)
             _recursive_front.append((path + (popped_node,), popped_stack, True))
         else:
-            log.debug("Matching %r", node)
-            match_type = node.match(word)
+            # log.debug("Matching %r", node)
+            match_type = node.match(word, evaluator)
             if match_type != Node.NoMatch:
                 yield path, stack, match_type == Node.FullMatch
 
     # Have to recurse into/out of subgraphs. Unwind automatically
     if _recursive_front:
-        log.info("recursing")
         for x in next_frontier(word, _recursive_front, evaluator):
             yield x
 
 
-def autocomplete_frontier(word, frontier):
+def autocomplete_frontier(word, frontier, evaluator):
     if word is not None:
         given = set()
         for path, stack, full_match in frontier:
             node = active_node(path)
             if not full_match:
-                for suggestion in node.possible_values(word):
+                for suggestion in node.possible_values(word, evaluator):
                     # skip multiple suggestions with the same text
                     if suggestion in given:
                         continue
@@ -123,9 +122,9 @@ def autocomplete(query, language_root, evaluator):
 
     if tokens or not frontier:
         return []
-    for (path, stack, complete) in frontier:
-        log.debug("%r", path)
-    return list(autocomplete_frontier(last_token(query), frontier))
+    # for (path, stack, complete) in frontier:
+    #     log.debug("%r", path)
+    return list(autocomplete_frontier(last_token(query), frontier, evaluator))
 
 
 def last_token(query):

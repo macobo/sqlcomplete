@@ -7,8 +7,12 @@ definition_path = join(dirname(abspath(__file__)), 'language', 'definition', 'po
 with open(definition_path) as f:
     language = f.read()
 
-(graph, sink), evaluator = create_graph(language)
+class Completer(object):
+    def __init__(self):
+        (self.graph, self.sink), self.evaluator = create_graph(language)
 
+    def set(self, key, value):
+        self.evaluator.set(key, value)
 
-def autocomplete(query):
-    return complete(query, graph, evaluator)
+    def autocomplete(self, query):
+        return complete(query, self.graph, self.evaluator)
