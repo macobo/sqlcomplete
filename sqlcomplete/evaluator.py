@@ -16,6 +16,9 @@ class Evaluator(object):
         if variables:
             self.variables.update(variables)
 
+    def set(self, key, values):
+        self.variables[name(key)] = values
+
     def is_subtree(self, variable):
         return name(variable) in self.graphs
 

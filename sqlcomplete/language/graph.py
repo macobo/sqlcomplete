@@ -101,16 +101,17 @@ def create_subgraph(syntax_element):
         node = Node(syntax_element)
         return node, node
     elif isinstance(syntax_element, Optional):
-        sub_node_start, sub_node_end = transform_syntax_list(syntax_element.things)
+        sub_node_start, sub_node_end = transform_syntax_list(syntax_element.things, empty_end=False)
         end = EmptyNode([])
         start = EmptyNode([sub_node_start, end], tag="Opt")
         sub_node_end.add_child(end)
+        end.tag = 'optional.end'
         return start, end
     elif isinstance(syntax_element, Either):
         start, end = EmptyNode(tag="Either"), EmptyNode()
         for child in syntax_element.things:
             # nope - this should be something like parse_syntax_list!
-            sub_start, sub_end = transform_syntax_list(child, root_node=start)
+            sub_start, sub_end = transform_syntax_list(child, root_node=start, empty_end=False)
             sub_end.add_child(end)
         return start, end
     else:
@@ -125,7 +126,7 @@ def create_subgraph(syntax_element):
         return sub_node_start, sub_node_end
 
 
-def transform_syntax_list(syntax_list, root_node=None):
+def transform_syntax_list(syntax_list, root_node=None, empty_end=True):
     """ Transform a tuple of syntax elements to a language graph.
         Returns the root and end node of the created graph """
     iterator = iter(syntax_list)
@@ -139,4 +140,10 @@ def transform_syntax_list(syntax_list, root_node=None):
         start, new_end = create_subgraph(element)
         end_node.add_child(start)
         end_node = new_end
+    # Recursion matching logic assumes that a tree starts and ends with
+    # empty nodes
+    if empty_end and not isinstance(end_node, EmptyNode):
+        node = EmptyNode()
+        end_node.add_child(node)
+        end_node = node
     return root_node, end_node

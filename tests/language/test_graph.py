@@ -46,6 +46,7 @@ def test_optional_subgraph_multiple():
     foobar_node = Node(Keyword('FOOBAR'), (b_node,))
     root_node = EmptyNode((foobar_node, end_node))
 
+
     assert start == root_node
 
 

@@ -10,4 +10,4 @@ def test_parser():
         ')', 'as', 'e', 'FROM', 'table']
 
 # TODO: test unicode
-# TODO: test expressions containing other punctation: []
+# TODO: test expressions containing other punctation: []::

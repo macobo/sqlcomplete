@@ -19,7 +19,7 @@ def children_of(frontier):
     Q = deque(frontier)
     visited = set(id(active_node(x[0])) for x in frontier)
     while Q:
-        path, stack = Q.pop()
+        path, stack, full_match = Q.pop()
         node = active_node(path)
         # log.debug("%r", path)
         # log.info("%r - %r", node, node.children)
@@ -29,9 +29,9 @@ def children_of(frontier):
             if id(child) not in visited:
                 visited.add(id(child))
                 if isinstance(child, EmptyNode) and not child.is_sink():
-                    Q.appendleft((next_path, stack))
+                    Q.appendleft((next_path, stack, full_match))
                 else:
-                    yield next_path, stack
+                    yield next_path, stack, full_match
 
 
 def next_frontier(word, frontier, evaluator):
@@ -44,16 +44,18 @@ def next_frontier(word, frontier, evaluator):
             `full_match` - if the match at this node was complete. If not, this
                 subgraph will not be visited further.
     """
-    children = list(children_of((path, stack) for path, stack, complete in frontier if complete))
+    children = list(children_of(f for f in frontier if f[2]))
+    log.debug("%r: %r, %r", word, children, frontier)
 
     _recursive_front = []
-    for path, stack in children:
+    for path, stack, _ in children:
         # log.info("%r", path)
         node = path[-1]
         if isinstance(node.value, Variable) and evaluator.is_subtree(node.value):
             # if is a subtree, recurse into it!
             # assumes the subtree starts with an empty node!
             sub_root = evaluator.get_subtree(node.value)
+            log.debug("Recursing into %r", sub_root)
             # recurse here!
             _recursive_front.append((path + (sub_root,), stack + [node], True))
         elif node.is_sink():
@@ -61,14 +63,17 @@ def next_frontier(word, frontier, evaluator):
                 continue
             # pop from stack
             popped_node, popped_stack = stack[-1], stack[:-1]
+            log.debug("Popping out of %r", popped_node)
             _recursive_front.append((path + (popped_node,), popped_stack, True))
         else:
+            log.debug("Matching %r", node)
             match_type = node.match(word)
             if match_type != Node.NoMatch:
                 yield path, stack, match_type == Node.FullMatch
 
     # Have to recurse into/out of subgraphs. Unwind automatically
     if _recursive_front:
+        log.info("recursing")
         for x in next_frontier(word, _recursive_front, evaluator):
             yield x
 
