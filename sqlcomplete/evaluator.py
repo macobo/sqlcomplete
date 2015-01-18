@@ -1,30 +1,33 @@
 from .language.tokens import Variable
+from collections import defaultdict
+
+
+def name(variable):
+    return variable.name if isinstance(variable, Variable) else variable
+
 
 class Evaluator(object):
+
     " Evaluate variables "
 
     def __init__(self, graphs=None, variables=None):
         self.graphs = graphs if graphs else {}
-        self.variables = variables if variables else {}
+        self.variables = defaultdict(list)
+        if variables:
+            self.variables.update(variables)
 
     def is_subtree(self, variable):
-        return variable.name in self.graphs
+        return name(variable) in self.graphs
 
     def get_subtree(self, variable):
-        if isinstance(variable, Variable):
-            name = variable.name
-        else:
-            name = variable
-        return self.graphs[name][0]
+        return self.graphs[name(variable)]
 
-    def get(self, variable, partial=None):
-        """ Return either a subtree (Node object) or a list of potential matches
-            for variable using variables passed to class.
+    def get_matches(self, variable, partial=None):
+        """ Return a list of potential matches for variable using possible values
+            passed to the class during initialization.
 
-            If match was not found, returns empty list """
-        if self.is_subtree(variable):
-            return self.get_subtree(variable)
-        matches = self.variables.get(variable.name, [])
+            If match was not found, returns an empty list. """
+        matches = self.variables.get(name(variable), [])
         if partial is not None:
             matches = [match for match in matches if match.startswith(partial)]
         return matches

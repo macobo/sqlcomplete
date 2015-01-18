@@ -74,16 +74,17 @@ def next_frontier(word, frontier, evaluator):
 
 
 def autocomplete_frontier(word, frontier):
-    given = set()
-    for path, stack, full_match in frontier:
-        node = active_node(path)
-        if not full_match:
-            for suggestion in node.possible_values(word):
-                # skip multiple suggestions with the same text
-                if suggestion in given:
-                    continue
-                given.add(suggestion)
-                yield suggestion
+    if word is not None:
+        given = set()
+        for path, stack, full_match in frontier:
+            node = active_node(path)
+            if not full_match:
+                for suggestion in node.possible_values(word):
+                    # skip multiple suggestions with the same text
+                    if suggestion in given:
+                        continue
+                    given.add(suggestion)
+                    yield suggestion
 
 parse_pattern = re.compile('''\
 \w+
@@ -100,8 +101,11 @@ def start_frontier(node):
     return [((node,), [], True)]
 
 
-def _autocomplete(tokens, node, evaluator):
-    frontier = start_frontier(node)
+def autocomplete(query, language_root, evaluator):
+    """ Take an sql query and a language and offer potential autocompletions for
+        the query. """
+    tokens = parse_sql(query)
+    frontier = start_frontier(language_root)
 
     while tokens and frontier:
         token = tokens[0]
@@ -114,16 +118,9 @@ def _autocomplete(tokens, node, evaluator):
 
     if tokens or not frontier:
         return []
-    # for (path, stack, complete) in frontier:
-    #     log.debug("%r", path)
-    return list(autocomplete_frontier(token, frontier))
-
-
-def autocomplete(query, language_root, evaluator):
-    """ Take an sql query and a language and offer potential autocompletions for
-        the query. """
-    tokens = parse_sql(query)
-    return _autocomplete(tokens, language_root, evaluator)
+    for (path, stack, complete) in frontier:
+        log.debug("%r", path)
+    return list(autocomplete_frontier(last_token(query), frontier))
 
 
 def last_token(query):

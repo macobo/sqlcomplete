@@ -3,9 +3,11 @@ statements are
     select_statement
     insert_statement
 
+
+# SELECT statement - based on http://www.postgresql.org/docs/9.1/static/sql-select.html
 select_statement is
     SELECT [ ALL | DISTINCT [ ON ( expression [, ...] ) ] ]
-        { * | expression [ [ AS ] output_name ] } [, ...]
+        { * | select_expression [ [ AS ] output_name ] } [, ...]
         [ FROM select_from_item [, ...] ]
         [ WHERE condition ]
         [ GROUP BY expression [, ...] ]
@@ -15,7 +17,11 @@ select_statement is
         [ LIMIT { count | ALL } ]
         [ OFFSET start [ ROW | ROWS ] ]
 
-select_from_item are
+select_expression is
+    COUNT ( * | select_statement )
+    column_name
+
+select_from_item is
     [ ONLY ] table_name [ * ] [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
     ( select_statement ) [ AS ] alias [ ( column_alias [, ...] ) ]
     with_query_name [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
@@ -23,6 +29,7 @@ select_from_item are
     function_name ( [ argument [, ...] ] ) AS ( column_definition [, ...] )
     from_item [ NATURAL ] join_type from_item [ ON join_condition | USING ( join_column [, ...] ) ]
 
+# INSERT statement - based on http://www.postgresql.org/docs/9.1/static/sql-insert.html
 insert_statement is
     INSERT INTO table [ ( column [, ...] ) ]
         { DEFAULT VALUES | VALUES ( { expression | DEFAULT } [, ...] ) | query }

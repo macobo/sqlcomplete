@@ -1,7 +1,6 @@
 from .graph import transform_syntax_list, EmptyNode
 from .tokens import Variable
 from .lexer import preprocess
-from sqlcomplete.evaluator import Evaluator
 from collections import defaultdict
 
 
@@ -10,11 +9,14 @@ def create_graph(language_definition):
     language graph.
 
     Language definition starts from definition `statements`. """
+    from sqlcomplete.evaluator import Evaluator
 
     definitions = preprocess(language_definition)
     graphs = {}
+    sources = {}
     for key, value in definitions.items():
         graphs[key] = source, sink = transform_syntax_list(value, root_node=EmptyNode())
+        sources[key] = source
         source.tag = "source_{0}".format(key)
         sink.tag = "sink_{0}".format(key)
     # keywords = keyword_map(graphs.values())
@@ -24,7 +26,7 @@ def create_graph(language_definition):
     #         replace_node(node, subgraph)
 
     # _fix_graph(graphs['statements'][0])
-    return graphs['statements'], Evaluator(graphs=graphs)
+    return graphs['statements'], Evaluator(graphs=sources)
 
 
 def walk(node, visited=None):
