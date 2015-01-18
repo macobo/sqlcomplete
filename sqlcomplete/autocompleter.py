@@ -91,7 +91,7 @@ def autocomplete_frontier(word, frontier, evaluator):
                     yield suggestion
 
 parse_pattern = re.compile('''\
-\w+
+[\w"]+
 | [(),*]''', re.UNICODE | re.X)
 
 

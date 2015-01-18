@@ -19,6 +19,9 @@ class Evaluator(object):
     def set(self, key, values):
         self.variables[name(key)] = values
 
+    def add(self, key, *values):
+        self.variables[name(key)].extend(values)
+
     def is_subtree(self, variable):
         return name(variable) in self.graphs
 

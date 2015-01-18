@@ -14,5 +14,8 @@ class Completer(object):
     def set(self, key, value):
         self.evaluator.set(key, value)
 
+    def add(self, key, *values):
+        self.evaluator.add(key, *values)
+
     def autocomplete(self, query):
         return complete(query, self.graph, self.evaluator)

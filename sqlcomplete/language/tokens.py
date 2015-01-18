@@ -45,9 +45,7 @@ class Variable(namedtuple('Variable', 'name')):
             return Node.FullMatch
 
     def possible_values(self, word, evaluator):
-        print self
         if evaluator.has_variable(self):
-
             return evaluator.get_matches(self, word)
         else:
             return []
