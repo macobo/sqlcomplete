@@ -13,6 +13,7 @@ queries = [
     # recursion
     ('select * from (s', ['SELECT']),
     ('select * from (select * from table) a', ['AS']),
+    ('select * from (select * from t', ['table1', 'table2']),
     # variable matching
     ('select col', ['column']),
     ('select * from tab', ['table1', 'table2'])
