@@ -31,6 +31,6 @@ select_from_item is
 
 # INSERT statement - based on http://www.postgresql.org/docs/9.1/static/sql-insert.html
 insert_statement is
-    INSERT INTO table [ ( column [, ...] ) ]
+    INSERT INTO table_name [ ( column_name [, ...] ) ]
         { DEFAULT VALUES | VALUES ( { expression | DEFAULT } [, ...] ) | query }
         [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
