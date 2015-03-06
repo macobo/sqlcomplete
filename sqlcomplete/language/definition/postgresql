@@ -2,7 +2,10 @@
 statements are
     select_statement
     insert_statement
+    alter_table_statement
 
+query is
+    select_statement
 
 # SELECT statement - based on http://www.postgresql.org/docs/9.1/static/sql-select.html
 select_statement is
@@ -34,3 +37,48 @@ insert_statement is
     INSERT INTO table_name [ ( column_name [, ...] ) ]
         { DEFAULT VALUES | VALUES ( { expression | DEFAULT } [, ...] ) | query }
         [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
+
+alter_table_statement is
+    ALTER TABLE [ ONLY ] table_name [ * ] alter_table_action [, ...]
+    ALTER TABLE [ ONLY ] table_name [ * ] RENAME [ COLUMN ] column TO new_column
+    ALTER TABLE table_name RENAME TO new_name
+    ALTER TABLE table_name SET SCHEMA new_schema
+
+alter_table_action is
+    # TODO - review the column_constraint part
+    ADD [ COLUMN ] column data_type [ COLLATE collation ] [ column_constraint ]
+    DROP [ COLUMN ] [ IF EXISTS ] column [ RESTRICT | CASCADE ]
+    ALTER [ COLUMN ] column [ SET DATA ] TYPE data_type [ COLLATE collation ] [ USING expression ]
+    ALTER [ COLUMN ] column SET DEFAULT expression
+    ALTER [ COLUMN ] column DROP DEFAULT
+    ALTER [ COLUMN ] column { SET | DROP } NOT NULL
+    ALTER [ COLUMN ] column SET STATISTICS integer
+    ALTER [ COLUMN ] column SET ( attribute_option = value [, ...] )
+    ALTER [ COLUMN ] column RESET ( attribute_option [, ...] )
+    ALTER [ COLUMN ] column SET STORAGE { PLAIN | EXTERNAL | EXTENDED | MAIN }
+    ADD table_constraint [ NOT VALID ]
+    ADD CONSTRAINT constraint_name
+    ADD CONSTRAINT { UNIQUE | PRIMARY KEY } USING INDEX index_name
+    ADD CONSTRAINT [ DEFERRABLE | NOT DEFERRABLE ] [ INITIALLY DEFERRED | INITIALLY IMMEDIATE ]
+    VALIDATE CONSTRAINT constraint_name
+    DROP CONSTRAINT [ IF EXISTS ]  constraint_name [ RESTRICT | CASCADE ]
+    DISABLE TRIGGER [ trigger_name | ALL | USER ]
+    ENABLE TRIGGER [ trigger_name | ALL | USER ]
+    ENABLE REPLICA TRIGGER trigger_name
+    ENABLE ALWAYS TRIGGER trigger_name
+    DISABLE RULE rewrite_rule_name
+    ENABLE RULE rewrite_rule_name
+    ENABLE REPLICA RULE rewrite_rule_name
+    ENABLE ALWAYS RULE rewrite_rule_name
+    CLUSTER ON index_name
+    SET WITHOUT CLUSTER
+    SET WITH OIDS
+    SET WITHOUT OIDS
+    SET ( storage_parameter = value [, ...] )
+    RESET ( storage_parameter [, ...] )
+    INHERIT parent_table
+    NO INHERIT parent_table
+    OF type_name
+    NOT OF
+    OWNER TO new_owner
+    SET TABLESPACE new_tablespace

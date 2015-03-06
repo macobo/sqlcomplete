@@ -33,7 +33,7 @@ def consume_single(tokens):
     if token in '*' or token.isupper():
         # return Keyword.read_joined(token, tokens)
         return Keyword(token)
-    elif token in '()':
+    elif token in '()=':
         return Literal(token)
     elif token.islower():
         return Variable(token)

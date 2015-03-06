@@ -1,5 +1,10 @@
 import pytest
 
+variables = {
+    'table_name': ['table1', 'table2', 'fancytable'],
+    'column_name': ['column', 'intcolumn']
+}
+
 queries = [
     # SELECT
     # Keyword completion
@@ -25,6 +30,16 @@ queries = [
     # variable matching
     ('insert into t', ['table1', 'table2']),
     ('insert into table1 (c', ['column']),
+    ('insert into table1 (column) def', ['DEFAULT']),
+    ('insert into table1 valu', ['VALUES']),
+    ('insert into table1 s', ['SELECT']),
+    ('insert into table1 select * from fan', ['fancytable']),
+    ('insert into table1 select * from fancytable ret', ['RETURNING']),
+
+    # ALTER TABLE
+    ('alt', ['ALTER']),
+    ('alter table t', ['table1', 'table2']),
+    ('alter table table1 enable r', ['REPLICA', 'RULE']),
 ]
 
 
@@ -38,8 +53,8 @@ def autocomplete():
     from sqlcomplete.postgresql import Completer
     completer = Completer()
 
-    completer.set('table_name', ['table1', 'table2', 'fancytable'])
-    completer.set('column_name', ['column', 'intcolumn'])
+    for key, values in variables.items():
+        completer.set(key, values)
     return completer.autocomplete
 
 
