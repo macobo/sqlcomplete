@@ -1,6 +1,6 @@
 from graphviz import Digraph
-from .language import Node
-from .language.creator import walk, keyword_map
+from sqlcomplete.language import Node
+from sqlcomplete.language.creator import walk, keyword_map
 
 
 def add_graph(dot, graph):
@@ -30,8 +30,8 @@ def render_subgraphs(name, subgraphs):
 
 
 if __name__ == "__main__":
-    from .postgresql import evaluator
-    render_subgraphs('postgresql', evaluator.graphs)
+    from sqlcomplete.postgresql import Completer
+    render_subgraphs('postgresql', Completer().evaluator.graphs)
 
     # for name, (subgraph_start, subgraph_end) in subgraphs.items():
     #     for node in kwmap[name]:
